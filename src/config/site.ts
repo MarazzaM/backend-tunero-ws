@@ -88,11 +88,11 @@ export const siteConfig = {
       link:"#"
     },
     {
-      title: "Updates",
+      title: "Tipos Atención",
       label: "342",
       icon: AlertCircle,
       variant: "ghost",
-      link:"#"
+      link:"/dashboard/administracion/tipo-atencion"
     },
     {
       title: "Forums",
