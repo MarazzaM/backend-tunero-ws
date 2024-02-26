@@ -20,7 +20,7 @@ import {
 
 import { labels } from "../data/data"
 import { tipoAtencionSchema } from "../data/schema"
-
+import { useRouter } from 'next/navigation'
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
 }
@@ -29,7 +29,7 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const task = tipoAtencionSchema.parse(row.original)
-
+  const router = useRouter()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,7 +42,7 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => router.push(`/dashboard/administracion/tipo-atencion/${task.id}`)}>Edit</DropdownMenuItem>
         <DropdownMenuItem>Make a copy</DropdownMenuItem>
         <DropdownMenuItem>Favorite</DropdownMenuItem>
         <DropdownMenuSeparator />
