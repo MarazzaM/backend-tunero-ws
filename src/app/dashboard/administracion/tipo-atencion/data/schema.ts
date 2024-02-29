@@ -6,6 +6,8 @@ export const tipoAtencionSchema = z.object({
   priority: z.number(),
   displayName: z.string(),
   active: z.boolean().default(false),
+  color:z.string(),
+  colorBg: z.string(),
 });
 
 export type TipoAtencion = z.infer<typeof tipoAtencionSchema>;

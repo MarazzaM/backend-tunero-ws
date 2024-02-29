@@ -53,7 +53,6 @@ function Page() {
   const { data: session } = useSession();
   const [socket, setSocket] = useState(null);
 
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
@@ -92,7 +91,7 @@ function Page() {
 
   const fetchNextMessage = () => {
     if (socket) {
-      socket.emit('callAppointment', { callerId: 1 });
+      socket.emit('callAppointment', { callerId: session?.user.id });
     }
   };
 
@@ -162,7 +161,7 @@ function Page() {
                       placeholder="Search service..."
                       className="h-9"
                     />
-                    <CommandEmpty>No framework found.</CommandEmpty>
+                    <CommandEmpty>No service found.</CommandEmpty>
                     <CommandGroup>
                       {services.map((service) => (
                         <CommandItem
