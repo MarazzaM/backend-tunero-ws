@@ -53,13 +53,18 @@ function Page() {
     };
   }, []);
 
-  function handleNormal(){
+  function handleNormal() {
     if (socket) {
-      const type = "normal";
-      socket.emit("message", { type, number: "N-2" }, (response) => {
-      });
+      // Emit the 'generateTicket' event with the hardcoded type
+ const type = "hardcodedType"; // Default value or retrieve it from somewhere
+socket.emit('generateTicket', { type }, (response) => {
+  // Handle the response from the server if needed
+  console.log('Response from server:', response);
+});
+
     }
   }
+  
 
   function handlePriority(){
     if (socket) {
