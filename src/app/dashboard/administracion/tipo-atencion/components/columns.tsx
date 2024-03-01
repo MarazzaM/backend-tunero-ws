@@ -13,7 +13,8 @@ import {
   ArrowRightIcon,
   ArrowUpIcon
 } from "@radix-ui/react-icons"
-export const columns: ColumnDef<Task>[] = [
+export const columns = (updateData) => [
+
   {
     id: "select",
     header: ({ table }) => (
@@ -122,6 +123,6 @@ export const columns: ColumnDef<Task>[] = [
   },  
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row }) => <DataTableRowActions row={row} updateData={updateData} />,
   },
 ]

@@ -40,7 +40,7 @@ export const siteConfig = {
       title: "Main",
       label: "128",
       icon: Inbox,
-      variant: "default",
+      variant: "ghost",
       link:"/dashboard/"
     },
     {

@@ -27,7 +27,20 @@ export default function TaskPage() {
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
   const apiUrl = `${backend}/tipo-atencion`;
-  const { data, error } = useSWR(token ? [apiUrl, token] : null, () => fetcher(apiUrl, token));
+  const { data, error, mutate } = useSWR(token ? [apiUrl, token] : null, () => fetcher(apiUrl, token));
+
+  const updateData = (updatedRowData) => {
+    // Update the data here, assuming `data` is an array of objects
+    const updatedData = data.map(item => {
+      if (item.id === updatedRowData.id) {
+        return updatedRowData;
+      }
+      return item;
+    });
+
+    // Trigger a re-render by mutating the data
+    mutate(updatedData, false);
+  };
 
   if (!token) {
     return <div>Loading...</div>; // Render loading indicator until session is loaded
@@ -40,6 +53,7 @@ export default function TaskPage() {
   if (!data) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <>
@@ -60,7 +74,7 @@ export default function TaskPage() {
         />
       </div>
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
-        <DataTable data={data} columns={columns} />
+      <DataTable data={data} columns={columns(updateData)} />
       </div>
     </>
   );

@@ -24,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { labels } from "../data/data";
 import { tipoAtencionSchema } from "../data/schema";
@@ -44,6 +45,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { HexColorPicker, HexColorInput } from "react-colorful";
+import { useSession } from "next-auth/react";
 
 export const FormSchema = z.object({
   type: z.string().min(1, {
@@ -68,10 +70,15 @@ interface DataTableRowActionsProps<TData> {
 
 export function DataTableRowActions<TData>({
   row,
+  updateData,
 }: DataTableRowActionsProps<TData>) {
   let task = tipoAtencionSchema.parse(row.original);
   const [color, setColor] = useState(task.color || "#ffffff");
   const [colorBg, setColorBg] = useState(task.colorBg || "#ffffff");
+  const { data: session } = useSession();
+  const backend = process.env.NEXT_PUBLIC_BACKEND;
+  const token = session?.backendTokens?.accessToken;
+
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -85,8 +92,34 @@ export function DataTableRowActions<TData>({
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(JSON.stringify(data, null, 2));
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    // console.log(JSON.stringify(data, null, 2));
+    const endpoint = `${backend}/tipo-atencion/${task.id}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      updateData({ ...task, ...data });
+
+      // Here, you could optimistically update the UI or refetch data
+      // For simplicity, we're just logging success
+      console.log('Update successful', await response.json());
+    } catch (error) {
+      console.error('Failed to update:', error);
+    } finally {
+      console.log('end')
+    }
+
   }
 
   return (
@@ -262,7 +295,9 @@ export function DataTableRowActions<TData>({
                 </div>
 
                 <DialogFooter>
+                <DialogClose asChild>
                   <Button type="submit">Save changes</Button>
+                  </DialogClose>
                 </DialogFooter>
               </form>
             </Form>
