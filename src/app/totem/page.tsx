@@ -48,24 +48,23 @@ function Page() {
     return response.json();
   };
   const { data, error, isLoading } = useSWR(apiUrl, fetcher);
-  console.log(data);
 
   useEffect(() => {
     const newSocket = createSocket();
     setSocket(newSocket);
 
     // Attach event listener only if socket is not null
-    if (newSocket) {
-      newSocket.on("message", (message) => {
-        console.log(`Received Socket.io message` + message.number);
-        setMessageSent(true);
-        setMessageNumber(message.number);
-        setMessageType(message.type);
-        setTimeout(() => {
-          setMessageSent(false);
-        }, 3000); // Hide the success component after 3 seconds
-      });
-    }
+    // if (newSocket) {
+    //   newSocket.on("generatedTicket", (message) => {
+    //     console.log(`Received Socket.io message` + message.number);
+    //     setMessageSent(true);
+    //     setMessageNumber(message.number);
+    //     setMessageType(message.type);
+    //     setTimeout(() => {
+    //       setMessageSent(false);
+    //     }, 3000); // Hide the success component after 3 seconds
+    //   });
+    // }
 
     return () => {
       // Cleanup socket connection when the component unmounts
@@ -80,6 +79,14 @@ function Page() {
       socket.emit("generateTicket", { type, priority }, (response) => {
         // Handle the response from the server if needed
         console.log("Response from server:", response);
+        if(response != "No more people in queue"){
+          setMessageSent(true);
+          setMessageNumber(response.number);
+          setMessageType(response.type);  
+          setTimeout(() => {
+            setMessageSent(false);
+          }, 3000); // Hide the success component after 3 seconds
+        }
       });
     }
   }
