@@ -16,7 +16,7 @@ function Page() {
   useEffect(() => {
     const socket = createSocket(); // Create WebSocket connection
     socket.on('calledAppointment', (appointmentInfo) => {
-      console.log(appointmentInfo);
+      // console.log(appointmentInfo);
   
       // Check if appointmentInfo has all the required fields
       if (
@@ -25,7 +25,7 @@ function Page() {
         appointmentInfo.appointment.number &&
         appointmentInfo.appointment.type &&
         appointmentInfo.callerId &&
-        appointmentInfo.callerId.callerId
+        appointmentInfo.callerId
       ) {
         setLatestAppointment(appointmentInfo); // Update latest appointment
         setPreviousAppointments(prevAppointments => {
@@ -53,7 +53,7 @@ function Page() {
       <div className='text-center capitalize'>
         <p className=" text-[10vh] mb-2">{latestAppointment.appointment.type}</p>
         <h2 className="text-[14vh] font-bold mb-4">{latestAppointment.appointment.number}</h2>
-        <p className="text-[10vh] text-gray-600">Position: {latestAppointment.callerId.callerId}</p>
+        <p className="text-[10vh] text-gray-600">Position: {latestAppointment.position}</p>
       </div>
     )}
   </div>
@@ -66,7 +66,7 @@ function Page() {
         <li key={appointmentInfo.appointment.id} className="mb-4">
           {/* <p className="text-lg text-gray-600">{appointmentInfo.appointment.type}</p> */}
           <p className="text-lg font-bold">{appointmentInfo.appointment.number}</p>
-          <p className="text-lg text-gray-600">Position: {appointmentInfo.callerId.callerId}</p>
+          <p className="text-lg text-gray-600">Position: {appointmentInfo.position}</p>
         </li>
       ))}
     </ul>

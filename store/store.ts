@@ -13,12 +13,14 @@ export const useStore = create(
 				refreshToken:'',
 			},
 			attending:{},
+			position:"",
 			// actions
 			startAttending: (data) => set({ data }),
 			startLogin: (user) => set({ user }),
 			startLogout: () => {
 				set({ user: {}  });
 			},
+			changePosition: (data) => set({ data }),
 		}),
 		{
 			name: 'auth-storage',
