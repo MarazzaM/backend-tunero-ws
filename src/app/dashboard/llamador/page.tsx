@@ -5,33 +5,17 @@ import { useSession } from "next-auth/react";
 import createSocket from "@/lib/websocket";
 import { useStore } from "../../../../store/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { cn } from "@/lib/utils";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { toast } from "@/components/ui/use-toast";
+
 import {
   Dialog,
   DialogContent,
@@ -40,9 +24,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Backend_URL } from "@/lib/Constants";
 
 function Page() {
   const [message, setMessage] = useState(null);
@@ -55,7 +40,7 @@ function Page() {
     const newSocket = createSocket();
     setSocket(newSocket);
 
-    newSocket.on("calledAppointment", (data) => {
+    newSocket.on("calledAppointmentClient", (data) => {
       // console.log(data);
       if (data.appointment.content === "No more people in queue") {
         setQueueEmpty(true);
@@ -63,6 +48,21 @@ function Page() {
       } else {
         setMessage(data);
         setQueueEmpty(false);
+        useStore.setState((prevState) => ({
+          ...prevState,
+          attending: data,
+        }));
+        console.log(useStore.getState());
+      }
+    });
+
+    newSocket.on("updatedQueue", (data) => {
+      // console.log(data);
+      if (data[0]?.content === "No more people in queue") {
+        // console.log("empty");
+        //here you could add logic to empty queue with socket
+      } else {
+        console.log(data);
       }
     });
 
@@ -72,15 +72,52 @@ function Page() {
   }, []);
 
   const fetchNextMessage = () => {
-    if (socket) {
-      const position = store?.position
-      const callerId = session?.user.id
+    if (socket && store?.position) {
+      // Ensure position is selected
+      const position = store?.position;
+      const callerId = session?.user.id;
       socket.emit("callAppointment", { callerId, position });
+    } else {
+      // Handle case where position is not selected, e.g., show an alert
+      alert("Please select a position before calling the next person.");
     }
   };
 
-  const EndAppointment = () => {
-    console.log("placeholder");
+  const EndAppointment = async () => {
+    const attendance = useStore.getState().attending;
+    const authToken = session?.backendTokens?.accessToken;
+
+    try {
+      const res = await fetch(Backend_URL + "/done", {
+        method: "POST",
+        body: JSON.stringify({
+          number: attendance.appointment.number,
+          type: attendance.appointment.type,
+          start: attendance.appointment.timestamp,
+          caller: attendance.callerId.toString(),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      if (!res.ok) {
+        alert(res);
+        return;
+      }
+      const response = await res.json();
+      console.log({ response });
+    } catch (error) {
+      // Handle any unexpected errors
+      console.error("Error:", error);
+      alert("An unexpected error occurred.");
+    }
+
+    useStore.setState((prevState) => ({
+      ...prevState,
+      attending: "",
+    }));
+    setMessage(null);
   };
 
   const FormSchema = z.object({
@@ -96,13 +133,13 @@ function Page() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const position = data.position; // Get the position from the form data
-  
+
     // Update the position in the store
     useStore.setState((prevState) => ({
       ...prevState,
       position: position,
     }));
-  
+
     // console.log(JSON.stringify(data, null, 2));
   }
   return (
@@ -110,7 +147,10 @@ function Page() {
       <div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline">Choose a position to call from</Button>
+            <Button variant="outline">
+              Choose a position to call from{" "}
+              {store.position ? `: ${store.position}` : ""}
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -144,7 +184,9 @@ function Page() {
                   )}
                 />
                 <DialogFooter>
-                  <Button type="submit">Save changes</Button>
+                  <DialogClose asChild>
+                    <Button type="submit">Save changes</Button>
+                  </DialogClose>
                 </DialogFooter>
               </form>
             </Form>

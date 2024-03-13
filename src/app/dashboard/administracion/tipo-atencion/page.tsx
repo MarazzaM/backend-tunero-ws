@@ -4,8 +4,7 @@ import { DataTable } from "./components/data-table";
 import { columns } from "./components/columns";
 import useSWR from 'swr';
 import { useSession } from "next-auth/react";
-
-const backend = process.env.NEXT_PUBLIC_BACKEND;
+import { Backend_URL as backend} from "@/lib/Constants";
 
 const fetcher = async (url, token) => {
   const response = await fetch(url, {

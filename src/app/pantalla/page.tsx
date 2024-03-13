@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import createSocket from '@/lib/websocket'; // Import your WebSocket utility
 import Image from 'next/image'
 import dynamic from 'next/dynamic';
+import {Howl} from 'howler';
 
 const Clock = dynamic(() => import('./clock'), { ssr: false });
 
@@ -27,6 +28,12 @@ function Page() {
         appointmentInfo.callerId &&
         appointmentInfo.callerId
       ) {
+        var sound = new Howl({
+          src: ['sound.mp3'],
+          html5: true
+        });
+        
+        sound.play();
         setLatestAppointment(appointmentInfo); // Update latest appointment
         setPreviousAppointments(prevAppointments => {
           // Update previous appointments, keeping only the latest 5
@@ -53,7 +60,7 @@ function Page() {
       <div className='text-center capitalize'>
         <p className=" text-[10vh] mb-2">{latestAppointment.appointment.type}</p>
         <h2 className="text-[14vh] font-bold mb-4">{latestAppointment.appointment.number}</h2>
-        <p className="text-[10vh] text-gray-600">Position: {latestAppointment.position}</p>
+        <p className="text-[10vh] text-gray-600">Position {latestAppointment.position}</p>
       </div>
     )}
   </div>
