@@ -58,35 +58,35 @@ export const siteConfig = {
       link:"/totem"
     },
     {
-      title: "Junk",
-      label: "23",
-      icon: ArchiveX,
-      variant: "ghost",
-      link:"#"
-    },
-    {
-      title: "Trash",
-      label: "",
-      icon: Trash2,
-      variant: "ghost",
-      link:"#"
-    },
-    {
-      title: "Archive",
-      label: "",
-      icon: Archive,
-      variant: "ghost",
-      link:"#"
-    },
-  ],
-  sidebarNavSeparated:[
-    {
-      title: "Social",
+      title: "Pantalla",
       label: "972",
       icon: Users2,
       variant: "ghost",
-      link:"#"
+      link:"/pantalla"
     },
+    // {
+    //   title: "Junk",
+    //   label: "23",
+    //   icon: ArchiveX,
+    //   variant: "ghost",
+    //   link:"#"
+    // },
+    // {
+    //   title: "Trash",
+    //   label: "",
+    //   icon: Trash2,
+    //   variant: "ghost",
+    //   link:"#"
+    // },
+    // {
+    //   title: "Archive",
+    //   label: "",
+    //   icon: Archive,
+    //   variant: "ghost",
+    //   link:"#"
+    // },
+  ],
+  sidebarNavSeparated:[
     {
       title: "Tipos Atención",
       label: "342",
@@ -94,27 +94,27 @@ export const siteConfig = {
       variant: "ghost",
       link:"/dashboard/administracion/tipo-atencion"
     },
-    {
-      title: "Forums",
-      label: "128",
-      icon: MessagesSquare,
-      variant: "ghost",
-      link:"#"
-    },
-    {
-      title: "Shopping",
-      label: "8",
-      icon: ShoppingCart,
-      variant: "ghost",
-      link:"#"
-    },
-    {
-      title: "Promotions",
-      label: "21",
-      icon: Archive,
-      variant: "ghost",
-      link:"#"
-    },
+    // {
+    //   title: "Forums",
+    //   label: "128",
+    //   icon: MessagesSquare,
+    //   variant: "ghost",
+    //   link:"#"
+    // },
+    // {
+    //   title: "Shopping",
+    //   label: "8",
+    //   icon: ShoppingCart,
+    //   variant: "ghost",
+    //   link:"#"
+    // },
+    // {
+    //   title: "Promotions",
+    //   label: "21",
+    //   icon: Archive,
+    //   variant: "ghost",
+    //   link:"#"
+    // },
   ],
   userdropdown: {
     Perfil: "/profile",

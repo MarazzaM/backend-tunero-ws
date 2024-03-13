@@ -12,7 +12,7 @@ function Page() {
   const [latestAppointment, setLatestAppointment] = useState(null);
   const [previousAppointments, setPreviousAppointments] = useState([]);
   const [isPulsing, setIsPulsing] = useState(false);
-
+  const [nextAppointments, setNextAppointments] = useState([]);
 
   useEffect(() => {
     const socket = createSocket(); // Create WebSocket connection
@@ -45,12 +45,25 @@ function Page() {
       }
     });
   
+
+    socket.on("updatedQueue", (data) => {
+      // console.log(data);
+      if (data[0]?.content === "No more people in queue") {
+        // console.log("empty");
+        //here you could add logic to empty queue with socket
+        setNextAppointments([])
+
+      } else {
+        setNextAppointments(data)
+      }
+    });
+
     return () => {
       socket.disconnect(); // Clean up WebSocket connection
     };
   }, []);
   
-  
+  // console.log(nextAppointments)
 
   return (
 <div className="grid grid-cols-4 grid-rows-4 gap-0 flex-grow">
@@ -80,12 +93,29 @@ function Page() {
   </div>
 
   <div className="col-span-3 row-span-1 p-8 border rounded-lg">
-  <Image
-      src="/logo.png"
-      width={100}
-      height={100}
-      alt="Picture of the author"
-    />
+
+  {nextAppointments.length > 0 ? (
+
+  <div className="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-200px),transparent_100%)]">
+    <ul className="flex items-center justify-center md:justify-start [&_li]:mx-8 [&_img]:max-w-none animate-infinite-scroll">
+    {nextAppointments.map((appointment, index) => (
+        <li key={index}>
+          {appointment.number}
+        </li>
+      ))}
+    </ul>
+    <ul className="flex items-center justify-center md:justify-start [&_li]:mx-8 [&_img]:max-w-none animate-infinite-scroll" aria-hidden="true"> 
+    {nextAppointments.map((appointment, index) => (
+        <li key={index}>
+          {appointment.number}
+        </li>
+      ))}
+    </ul>
+</div>
+ ) : (
+  <p>No more people in queue</p>
+)}
+
   </div>
 
   <div className="col-span-1 row-span-1 p-8 border rounded-lg">
